@@ -1,6 +1,6 @@
 package com.example.shokaron.controller;
 
-import com.example.shokaron.DTO.NoteDetail;
+import com.example.shokaron.DTO.NoteDetailDto;
 import com.example.shokaron.Entity.Catalog;
 import com.example.shokaron.Entity.Materie;
 import com.example.shokaron.Entity.Nota;
@@ -9,7 +9,6 @@ import com.example.shokaron.Repository.Catalog_Repository;
 import com.example.shokaron.Repository.Materie_Repository;
 import com.example.shokaron.Repository.Nota_Repository;
 import com.example.shokaron.Repository.Student_Repository;
-import com.example.shokaron.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/nota")
+
 public class Controller_Nota {
 
     private final Nota_Repository notaRepository;
@@ -36,17 +36,17 @@ public class Controller_Nota {
         this.materieRepository = materieRepository;
     }
 
-    @GetMapping("/nota/all")
-    public ResponseEntity<List<NoteDetail>> getAllNotesWithDetails() {
+    @GetMapping("/all")
+    public ResponseEntity<List<NoteDetailDto>> getAllNotesWithDetails() {
         List<Nota> noteList = notaRepository.findAll();
         if (noteList.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        List<NoteDetail> notaDetailsList = new ArrayList<>();
+        List<NoteDetailDto> notaDetailsList = new ArrayList<>();
 
         for (Nota nota : noteList) {
-            NoteDetail dto = new NoteDetail();
+            NoteDetailDto dto = new NoteDetailDto();
             dto.setId(nota.getId());
             dto.setNumeStudent(nota.getStudent().getName());
             dto.setMaterie(nota.getMaterie().getName());
@@ -59,12 +59,12 @@ public class Controller_Nota {
         return ResponseEntity.ok(notaDetailsList);
     }
 
-    @PostMapping("/student/{studentId}/{materieId}/{catalogId}/{val_nota}")
+    @PostMapping("/{studentId}/{materieId}/{catalogId}")
     public ResponseEntity<String> adaugaNota(
             @PathVariable Long studentId,
             @PathVariable Long materieId,
             @PathVariable Long catalogId,
-            @PathVariable int val_nota
+            @RequestBody int val_nota
     ) {
         try {
             Optional<Student> studentOptional = studentRepository.findById(studentId);
@@ -92,10 +92,9 @@ public class Controller_Nota {
         }
     }
 
-    @PutMapping("/nota/{notaId}")
+    @PutMapping("/{notaId}")
     public ResponseEntity<String> updateNota(@PathVariable Long notaId, @RequestBody int val_nota) {
         try {
-            String message="test";
             Optional<Nota> existingNotaOptional = notaRepository.findById(notaId);
             if (existingNotaOptional.isPresent()) {
                 Nota existingNota = existingNotaOptional.get();
@@ -114,11 +113,11 @@ public class Controller_Nota {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Eroare la actualizarea notei.");
         }
     }
-    @DeleteMapping("/nota/{notaid}")
-    public ResponseEntity<String> deleteNota(@PathVariable Long notaid){
-        Nota nota=notaRepository.findById(notaid).orElse(null);
+    @DeleteMapping("/{notaId}")
+    public ResponseEntity<String> deleteNota(@PathVariable Long notaId){
+        Nota nota=notaRepository.findById(notaId).orElse(null);
         if(nota!=null){
-            notaRepository.deleteById(notaid);
+            notaRepository.deleteById(notaId);
             return ResponseEntity.ok("Nota a fost stearsa cu succes");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nota nu a fost gasita");

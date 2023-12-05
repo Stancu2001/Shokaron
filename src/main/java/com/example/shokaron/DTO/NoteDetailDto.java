@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NoteDetail {
+public class NoteDetailDto {
     private Long id;
     private String numeStudent;
     private String materie;
