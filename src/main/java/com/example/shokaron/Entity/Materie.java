@@ -1,5 +1,6 @@
 package com.example.shokaron.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,12 +24,15 @@ public class Materie {
     private String Name;
 
     @ManyToMany(mappedBy = "materii")
+    @JsonIgnore
     private List<Profesor> profesori;
 
     @OneToMany(mappedBy = "materie")
+    @JsonIgnore
     private List<ProfesorMaterieClasa> profesoriMateriiClase;
 
     @ManyToMany(mappedBy = "materii")
+    @JsonIgnore
     private List<Catalog> cataloage;
 }
 

@@ -14,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +55,6 @@ public class Controller_Nota {
             dto.setMaterie(nota.getMaterie().getName());
             dto.setClasa(nota.getCatalog().getClasa().getClassName());
             dto.setNota(nota.getNota());
-
             notaDetailsList.add(dto);
         }
 
@@ -80,7 +82,6 @@ public class Controller_Nota {
                 nota.setMaterie(materie);
                 nota.setCatalog(catalog);
                 nota.setNota(val_nota);
-
                 notaRepository.save(nota);
 
                 return ResponseEntity.ok("Nota a fost adăugată cu succes!");

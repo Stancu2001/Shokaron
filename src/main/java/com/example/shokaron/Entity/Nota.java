@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 
 @Entity
 @Getter
@@ -35,7 +37,6 @@ public class Nota {
     @JoinColumn(name = "catalog_id")
     @JsonIgnore
     private Catalog catalog;
-
     public Long getId() {
         return id;
     }
@@ -75,5 +76,4 @@ public class Nota {
     public void setCatalog(Catalog catalog) {
         this.catalog = catalog;
     }
-// Getters and setters
 }

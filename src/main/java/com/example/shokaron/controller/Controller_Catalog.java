@@ -1,5 +1,7 @@
 package com.example.shokaron.controller;
 
+import com.example.shokaron.DTO.CatalogDetailDto;
+import com.example.shokaron.DTO.MaterieDto;
 import com.example.shokaron.Entity.Catalog;
 import com.example.shokaron.Entity.Materie;
 import com.example.shokaron.Repository.Catalog_Repository;
@@ -9,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -38,6 +42,50 @@ public class Controller_Catalog {
 //
 //        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalog sau materie nu a fost găsită");
 //    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> get(){
+        List<Catalog> catalogList= catalogRepository.findAll();
+        if(catalogList.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalogul este gol.");
+        }
+        List<CatalogDetailDto> catalogDetailDtos=new ArrayList<>();
+        for(Catalog catalog:catalogList){
+            CatalogDetailDto catalogDetailDto=new CatalogDetailDto();
+            catalogDetailDto.setId(catalog.getId());
+            catalogDetailDto.setClasa(catalog.getClasa().getClassName());
+            List<MaterieDto> materieDtos=new ArrayList<>();
+            for(Materie materie:catalog.getMaterii()){
+                MaterieDto materie1=new MaterieDto();
+                materie1.setId(materie.getId());
+                materie1.setName(materie.getName());
+                materieDtos.add(materie1);
+            }
+            catalogDetailDto.setMaterie(materieDtos);
+            catalogDetailDtos.add(catalogDetailDto);
+        }
+        return ResponseEntity.ok(catalogDetailDtos);
+    }
+    @GetMapping("/{ID}")
+    public ResponseEntity<?> getbyID(@PathVariable Long ID){
+       Catalog catalog=catalogRepository.findById(ID).orElse(null);
+        if(catalog==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalogul nu a fost gasit");
+        }
+        CatalogDetailDto catalogDetailDto=new CatalogDetailDto();
+        catalogDetailDto.setId(catalog.getId());
+        catalogDetailDto.setClasa(catalog.getClasa().getClassName());
+        List<MaterieDto> materieDtos=new ArrayList<>();
+        for(Materie materie:catalog.getMaterii()){
+            MaterieDto materie1=new MaterieDto();
+            materie1.setId(materie.getId());
+            materie1.setName(materie.getName());
+            materieDtos.add(materie1);
+        }
+        catalogDetailDto.setMaterie(materieDtos);
+        return ResponseEntity.ok(catalogDetailDto);
+    }
+
 
     @PostMapping("/addmaterie")
     public ResponseEntity<String> addMaterieToCatalog(@RequestBody Map<String, Long> request) {
@@ -77,4 +125,6 @@ public class Controller_Catalog {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalog sau materie nu a fost găsită");
     }
+
+
 }
