@@ -159,19 +159,19 @@ public class Controller_Catalog {
         System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB "+requestIdDto.getId());
         Long Id=requestIdDto.getId();
         Catalog existclass=catalogRepository.findByClasaId(Id);
-        Clasa clasa = clasaRepository.findById(Id).orElse(null);
-        Student student=studentRepository.findById(Id).orElse(null);
-        if(student!=null){
-        String a=student.getClass().getName();
-
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA "+a);
-        }
+//        Student student=studentRepository.findById(Id).orElse(null);
+//        if(student!=null){
+//            Clasa clasa1 =student.getClasa();
+//            Catalog catalog= clasa1.getCatalog();
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA "+clasa1.getClassName()+" "+catalog.getId());
+//        }
 
 
         if(existclass!=null)
         {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Clasa este deja asociata cu catalogul");
         }
+        Clasa clasa = clasaRepository.findById(Id).orElse(null);
         if(clasa==null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Clasa nu a fost gasita");
         }
@@ -181,6 +181,34 @@ public class Controller_Catalog {
         return ResponseEntity.ok("Catalogul a fost asociat cu succes");
     }
 
+    @PutMapping("/{catalogId}")
+    public ResponseEntity<?> updateCatalog(@PathVariable Long catalogId, @RequestBody RequestIdDto requestIdDto) {
+        Catalog existingCatalog = catalogRepository.findById(catalogId).orElse(null);
+        if (existingCatalog == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalogul nu a fost gasit");
+        }
 
+        Long classId = requestIdDto.getId();
+        Clasa existingClass = clasaRepository.findById(classId).orElse(null);
+        if (existingClass == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Clasa nu a fost gasita");
+        }
+
+        // Actualizarea catalogului pentru a asocia clasa noua
+        existingCatalog.setClasa(existingClass);
+        catalogRepository.save(existingCatalog);
+
+        return ResponseEntity.ok("Catalogul a fost actualizat cu succes");
+    }
+    @DeleteMapping("/{catalogId}")
+    public ResponseEntity<?> deleteCatalog(@PathVariable Long catalogId){
+        Catalog catalog=catalogRepository.findById(catalogId).orElse(null);
+        System.out.println(catalog.getClasa());
+        if(catalog==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalogul nu a fost gasit");
+        }
+        catalogRepository.delete(catalog);
+        return ResponseEntity.ok("Catalogul a fost sters");
+    }
 
 }
