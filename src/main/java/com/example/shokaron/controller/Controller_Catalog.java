@@ -1,11 +1,17 @@
 package com.example.shokaron.controller;
 
 import com.example.shokaron.DTO.CatalogDetailDto;
+import com.example.shokaron.DTO.Catalog_ClasaDto;
 import com.example.shokaron.DTO.MaterieDto;
+import com.example.shokaron.DTO.RequestIdDto;
 import com.example.shokaron.Entity.Catalog;
+import com.example.shokaron.Entity.Clasa;
 import com.example.shokaron.Entity.Materie;
+import com.example.shokaron.Entity.Student;
 import com.example.shokaron.Repository.Catalog_Repository;
+import com.example.shokaron.Repository.Clasa_Repository;
 import com.example.shokaron.Repository.Materie_Repository;
+import com.example.shokaron.Repository.Student_Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +20,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/catalog")
 public class Controller_Catalog {
     private final Catalog_Repository catalogRepository;
     private final Materie_Repository materieRepository;
+    private final Clasa_Repository clasaRepository;
+    private final Student_Repository studentRepository;
 
     @Autowired
-    public Controller_Catalog(Catalog_Repository catalogRepository, Materie_Repository materieRepository) {
+    public Controller_Catalog(Catalog_Repository catalogRepository, Materie_Repository materieRepository, Clasa_Repository clasaRepository, Student_Repository studentRepository) {
         this.catalogRepository = catalogRepository;
         this.materieRepository = materieRepository;
+        this.clasaRepository=clasaRepository;
+        this.studentRepository=studentRepository;
     }
 
 //    @PostMapping("/addmaterie/{catalogId}/{materieId}")
@@ -125,6 +136,51 @@ public class Controller_Catalog {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalog sau materie nu a fost găsită");
     }
+
+
+    @GetMapping("/allclassname")
+    public ResponseEntity<?> getclassname(){
+        List<Catalog> catalogList= catalogRepository.findAll();
+        if(catalogList.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalogul este gol.");
+        }
+        List<Catalog_ClasaDto> catalogClasaDtos=new ArrayList<>();
+        for(Catalog catalog:catalogList){
+            Catalog_ClasaDto catalogDetailDto=new Catalog_ClasaDto();
+            catalogDetailDto.setId(catalog.getId());
+            catalogDetailDto.setClasa(catalog.getClasa().getClassName());
+            catalogClasaDtos.add(catalogDetailDto);
+        }
+        return ResponseEntity.ok(catalogClasaDtos);
+    }
+
+    @PostMapping("/addclasa")
+    public ResponseEntity<?> addclass(@RequestBody RequestIdDto requestIdDto){
+        System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB "+requestIdDto.getId());
+        Long Id=requestIdDto.getId();
+        Catalog existclass=catalogRepository.findByClasaId(Id);
+        Clasa clasa = clasaRepository.findById(Id).orElse(null);
+        Student student=studentRepository.findById(Id).orElse(null);
+        if(student!=null){
+        String a=student.getClass().getName();
+
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA "+a);
+        }
+
+
+        if(existclass!=null)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Clasa este deja asociata cu catalogul");
+        }
+        if(clasa==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Clasa nu a fost gasita");
+        }
+        Catalog catalog=new Catalog();
+        catalog.setClasa(clasa);
+        catalogRepository.save(catalog);
+        return ResponseEntity.ok("Catalogul a fost asociat cu succes");
+    }
+
 
 
 }

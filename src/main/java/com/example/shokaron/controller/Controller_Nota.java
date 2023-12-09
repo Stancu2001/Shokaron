@@ -51,7 +51,7 @@ public class Controller_Nota {
         for (Nota nota : noteList) {
             NoteDetailDto dto = new NoteDetailDto();
             dto.setId(nota.getId());
-            dto.setNumeStudent(nota.getStudent().getName());
+            dto.setNumeStudent(nota.getStudent().getNume()+" "+nota.getStudent().getPrenume());
             dto.setMaterie(nota.getMaterie().getName());
             dto.setClasa(nota.getCatalog().getClasa().getClassName());
             dto.setNota(nota.getNota());

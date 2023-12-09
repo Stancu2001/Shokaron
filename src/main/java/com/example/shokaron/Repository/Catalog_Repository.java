@@ -12,4 +12,5 @@ import java.util.Optional;
 @Repository
 @EnableJpaRepositories
 public interface Catalog_Repository extends JpaRepository<Catalog, Long> {
+    Catalog findByClasaId(Long Id);
 }

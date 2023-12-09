@@ -1,6 +1,5 @@
 package com.example.shokaron.DTO;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +9,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NoteDetailDto {
-    private Long id;
-    private String numeStudent;
+public class Catalog_ClasaDto {
+    private Long Id;
     private String clasa;
-    private String materie;
-    private int nota;
 }

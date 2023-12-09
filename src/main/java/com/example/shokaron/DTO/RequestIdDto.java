@@ -1,6 +1,7 @@
 package com.example.shokaron.DTO;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +11,6 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NoteDetailDto {
+public class RequestIdDto {
     private Long id;
-    private String numeStudent;
-    private String clasa;
-    private String materie;
-    private int nota;
 }

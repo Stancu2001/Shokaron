@@ -20,7 +20,11 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String nume;
+    private String prenume;
+
+//    @Column(unique = true,length = 13)
+//    private String CNP;
 
     @ManyToOne
     @JoinColumn(name = "class_id")
